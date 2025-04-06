@@ -1,39 +1,52 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ProductsService } from '../../services/product.service'
+import { ProductsService } from '../../services/product.service';
 import { ProductModalComponent } from '../../components/product-modal/product-modal.component';
 import { CommonModule } from '@angular/common';
+
+interface Product {
+  id: number;
+  title: string;
+  price: number;
+  description: string;
+  images: string[];
+  category: {
+    id: number;
+    name: string;
+    image: string;
+  };
+}
 
 @Component({
   selector: 'app-product-detail',
   imports: [ProductModalComponent, CommonModule],
   templateUrl: './product-detail.component.html',
-  styleUrls: ['./product-detail.component.scss']
+  styleUrls: ['./product-detail.component.scss'],
 })
-export class ProductDetailComponent {
-  productId!: string;
-  product: any = null;
+export class ProductDetailComponent implements OnInit {
+  productId!: number;
+  product: Product | null = null;
   showModal = true;
 
+  constructor(
+    private route: ActivatedRoute,
+    private productService: ProductsService
+  ) {}
 
-  constructor(private route: ActivatedRoute, private productService: ProductsService) {
-    this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
-      if (id) {
-        this.productId = id;
-        this.fetchProduct();
-      }
+  ngOnInit(): void {
+    this.route.params.subscribe((params) => {
+      this.productId = +params['id'];
+      this.fetchProduct();
     });
   }
 
-  fetchProduct() {
+  fetchProduct(): void {
     this.productService.getProductById(this.productId).subscribe(
-      (product: any) => {
-        this.product = product;
-        console.log('Fetched Product:', this.product);
+      (data) => {
+        this.product = data;
       },
-      (error: any) => {
-        console.error('Error fetching product:', error);
+      (error) => {
+        console.error('Error fetching product', error);
       }
     );
   }
