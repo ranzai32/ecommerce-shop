@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'accounts',
-    'corsheaders'
+    'corsheaders',
+    'store'
 ]
 
 MIDDLEWARE = [
@@ -103,6 +104,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -138,8 +142,8 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_WHITELIST = [
-    "http://localhost:4200",  # Разреши запросы с твоего Angular-приложения
-    "http://127.0.0.1:8000",  # Или с IP-адреса
+    "http://localhost:4200", 
+    "http://127.0.0.1:8000",  
 ]
 
 CORS_ALLOW_METHODS = [

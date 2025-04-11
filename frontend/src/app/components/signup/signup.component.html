@@ -3,6 +3,12 @@
     <div *ngIf="error" class="error">{{ error }}</div>
     <form (ngSubmit)="signup()">
         <div>
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" name="firstName" [(ngModel)]="firstName"> </div>
+        <div>
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" name="lastName" [(ngModel)]="lastName"> </div>
+        <div>
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" [(ngModel)]="username" required>
         </div>

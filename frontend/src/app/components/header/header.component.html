@@ -52,10 +52,16 @@
 
         <ng-template #profileSection>
           <div class="flex items-center space-x-3">
-            <img
-              [src]="userProfileImageUrl || 'assets/default-profile.png'" alt="Profile"
-              class="h-8 w-8 rounded-full shadow-md object-cover" />
-            <button (click)="logout()" class="text-sm font-medium text-blue-500 hover:text-blue-700 focus:outline-none">Logout</button> </div>
+            <a routerLink="/profile" class="cursor-pointer"> <img
+                [src]="userProfileImageUrl || 'assets/default-profile.png'"
+                alt="Profile"
+                class="h-8 w-8 rounded-full shadow-md object-cover hover:opacity-80 transition-opacity"
+              />
+            </a>
+            <span *ngIf="username" class="text-sm font-medium text-gray-700 hidden lg:inline">
+                <a routerLink="/profile" class="hover:text-blue-600">{{ username }}</a> </span>
+            <button (click)="logout()" class="text-sm font-medium text-blue-500 hover:text-blue-700 focus:outline-none">Logout</button>
+          </div>
         </ng-template>
 
         <a

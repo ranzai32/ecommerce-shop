@@ -1,0 +1,49 @@
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">Ваш профиль</h1>
+  
+    <div *ngIf="isLoading">
+      <p>Загрузка данных...</p>
+    </div>
+    <div *ngIf="errorMessage" class="text-red-600 bg-red-100 border border-red-400 p-4 rounded mb-4">
+      {{ errorMessage }}
+    </div>
+  
+    <div *ngIf="!isLoading && userData">
+      <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+  
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Имя пользователя (логин):
+          </label>
+          <p class="text-gray-700 text-lg">{{ userData.username || 'Не указано' }}</p>
+        </div>
+  
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Имя:
+          </label>
+          <p class="text-gray-700 text-lg">{{ userData.first_name || 'Не указано' }}</p>
+        </div>
+  
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Фамилия:
+          </label>
+          <p class="text-gray-700 text-lg">{{ userData.last_name || 'Не указано' }}</p>
+        </div>
+  
+        <div class="mb-6">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Email:
+          </label>
+          <p class="text-gray-700 text-lg">{{ userData.email || 'Не указан' }}</p>
+        </div>
+  
+        </div>
+    </div>
+  
+    <div *ngIf="!isLoading && !userData && !errorMessage">
+      <p>Не удалось загрузить данные профиля.</p>
+    </div>
+  
+  </div>

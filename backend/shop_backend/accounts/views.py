@@ -48,10 +48,19 @@ class ValidateTokenView(APIView):
       
 
         print(f"ValidateTokenView called successfully for user: {request.user.username}") # Лог для подтверждения
-
+        user = request.user
+        
+        user_data = {
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+        }
         
 
         return Response({
             'isValid': True,
+            'user': user_data,
            
         }, status=status.HTTP_200_OK)
