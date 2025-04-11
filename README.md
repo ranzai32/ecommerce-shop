@@ -1,3 +1,10 @@
+# Team
+
+Макымов Алихан - 23B031360
+Канлыбаев Алихан - 23B031518
+Строев Павел - 23B031901
+
+
 # EcommerceShop
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.0.
