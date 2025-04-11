@@ -13,4 +13,8 @@ import { MyhomeComponent } from "./components/myhome/myhome.component";
 })
 export class AppComponent {
   title = 'my_new_ecommerce_app';
+
+
+  constructor() { 
+  }
 }

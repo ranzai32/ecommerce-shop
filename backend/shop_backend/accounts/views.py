@@ -4,11 +4,14 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from .models import CustomUser
 from .serializers import UserSerializer, UserRegistrationSerializer, UserLoginSerializer
+from rest_framework.views import APIView
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.ModelViewSet): 
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAdminUser] 
+    permission_classes = [permissions.IsAdminUser]
 
 class UserRegistrationViewSet(viewsets.ViewSet):
     serializer_class = UserRegistrationSerializer
@@ -35,3 +38,20 @@ class UserLoginViewSet(viewsets.ViewSet):
             else:
                 return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ValidateTokenView(APIView):
+   
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+      
+
+        print(f"ValidateTokenView called successfully for user: {request.user.username}") # Лог для подтверждения
+
+        
+
+        return Response({
+            'isValid': True,
+           
+        }, status=status.HTTP_200_OK)
