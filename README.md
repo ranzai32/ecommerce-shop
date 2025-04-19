@@ -13,9 +13,9 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 
 # Demo 
 
-![alt text](image.png)
-![alt text](image-1.png)
-![alt text](image-2.png)
+![alt text](screens/image.png)
+![alt text](screens/image-1.png)
+![alt text](screens/image-2.png)
 
 ## Development server
 
