@@ -1,6 +1,115 @@
-<router-outlet>
-  <div class="container mx-auto py-12">
-    <h1 class="text-3xl font-bold text-gray-900">Product Details</h1>
-    <h2>this is my basket page</h2>
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <h1 class="text-3xl font-bold text-gray-800 mb-6">Ваша Корзина</h1>
+
+  <div *ngIf="isLoading" class="text-center py-10">
+    <p class="text-gray-500 text-lg">Загрузка корзины...</p>
   </div>
-</router-outlet>
+
+  <div *ngIf="errorMessage && !isLoading" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+    <strong class="font-bold">Ошибка!</strong>
+    <span class="block sm:inline"> {{ errorMessage }}</span>
+    <button (click)="loadCart()" class="ml-4 bg-red-700 text-white py-1 px-2 rounded text-sm hover:bg-red-800">Попробовать снова</button>
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage && cart">
+
+    <div *ngIf="cart.items.length === 0; else cartNotEmpty" class="text-center py-10">
+        <p class="text-gray-600 text-xl mb-4">Ваша корзина пуста.</p>
+        <a routerLink="/" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition">
+            К покупкам
+        </a>
+    </div>
+
+    <ng-template #cartNotEmpty>
+      <div class="flex flex-col lg:flex-row gap-8">
+
+        <div class="lg:w-2/3">
+          <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <ul>
+              <li *ngFor="let item of cart.items" class="flex flex-col sm:flex-row items-center p-4 border-b last:border-b-0">
+                <a [routerLink]="['/product-detail', item.product.id]" class="w-20 h-20 sm:w-24 sm:h-24 mb-3 sm:mb-0 sm:mr-4 flex-shrink-0">
+                   <img [src]="item.product.image ? ('http://127.0.0.1:8000' + item.product.image) : 'assets/placeholder.jpg'"
+                        [alt]="item.product.name"
+                        class="w-full h-full object-cover rounded-md border">
+                </a>
+
+                <div class="flex-grow text-center sm:text-left mb-3 sm:mb-0">
+                  <a [routerLink]="['/product-detail', item.product.id]" class="text-lg font-semibold text-gray-800 hover:text-blue-600 mb-1 block">{{ item.product.name }}</a>
+                  <p class="text-gray-600 text-sm">Цена: {{ item.product.price | currency:'KZT':'symbol':'1.0-0' }}</p>
+                </div>
+
+                <div class="flex items-center justify-center sm:justify-start my-3 sm:my-0 sm:mx-4 flex-shrink-0">
+                  <button
+                    (click)="decreaseQuantity(item.id)"
+                    class="bg-gray-200 text-gray-700 hover:bg-gray-300 font-bold w-8 h-8 rounded-full transition duration-150 ease-in-out flex items-center justify-center mx-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    [disabled]="item.quantity <= 1 || item.loading || updatingItemId === item.id">
+                    -
+                  </button>
+                  <span class="font-semibold text-lg px-3 text-gray-800 min-w-[40px] text-center">
+                    <span *ngIf="!item.loading">{{ item.quantity }}</span>
+                    <span *ngIf="item.loading" class="text-xs animate-pulse">...</span>
+                  </span>
+                  <button
+                    (click)="increaseQuantity(item.id)"
+                    class="bg-gray-200 text-gray-700 hover:bg-gray-300 font-bold w-8 h-8 rounded-full transition duration-150 ease-in-out flex items-center justify-center mx-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    [disabled]="item.loading || updatingItemId === item.id">
+                    +
+                  </button>
+                </div>
+
+                <div class="font-semibold text-gray-800 w-full sm:w-auto text-center sm:text-right mb-3 sm:mb-0 sm:mx-4 flex-shrink-0">
+                  {{ item.total_item_price | currency:'KZT':'symbol':'1.0-0' }}
+                </div>
+
+                <div class="flex-shrink-0">
+                  <button
+                    (click)="removeItem(item.id)"
+                    title="Удалить товар"
+                    class="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-100 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    [disabled]="item.loading || updatingItemId === item.id">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+              </li>
+            </ul>
+          </div>
+           <div class="mt-4 text-right">
+               <button (click)="clearCart()" class="text-sm text-gray-500 hover:text-red-600 hover:underline" [disabled]="isAnythingLoading">
+                   Очистить корзину
+               </button>
+           </div>
+        </div>
+
+        <div class="lg:w-1/3">
+          <div class="bg-white shadow-md rounded-lg p-6 sticky top-24">
+            <h2 class="text-xl font-semibold mb-4 border-b pb-2">Сумма заказа</h2>
+            <div class="flex justify-between mb-2">
+              <span class="text-gray-600">Товары ({{ cartTotalQuantity }} шт.)</span> ```
+              <span class="font-semibold">{{ cart.total_price | currency:'KZT':'symbol':'1.0-0' }}</span>
+            </div>
+            <div class="flex justify-between mb-4">
+              <span class="text-gray-600">Доставка</span>
+              <span class="font-semibold">БЕСПЛАТНО</span>
+            </div>
+            <div class="border-t pt-4 flex justify-between items-center">
+              <span class="text-lg font-bold text-gray-800">Итого</span>
+              <span class="text-lg font-bold text-gray-800">{{ cart.total_price | currency:'KZT':'symbol':'1.0-0' }}</span>
+            </div>
+            <button routerLink="/checkout" class="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition disabled:opacity-50" [disabled]="cartTotalQuantity === 0 || isAnythingLoading">
+              Перейти к оформлению
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </ng-template>
+
+  </div>
+
+  <div *ngIf="!isLoading && !cart && !errorMessage" class="text-center py-10">
+      <p class="text-gray-600">Не удалось загрузить корзину.</p>
+  </div>
+
+</div>
