@@ -8,6 +8,7 @@ import { LoginComponent } from './components/login/login.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { UserProfileComponent } from './pages/user-profile/user-profile.component';
 import { authGuard } from './guards/auth.guard';
+import { SearchResultsComponent } from './pages/search-results/search-results.component'; 
 
 export const routes: Routes = [
   { path: '', component: MyhomeComponent },
@@ -20,5 +21,6 @@ export const routes: Routes = [
     component: UserProfileComponent,
     canActivate: [authGuard] 
   },
+  { path: 'search', component: SearchResultsComponent },
   { path: '**', component: NotFoundComponent }, 
 ]

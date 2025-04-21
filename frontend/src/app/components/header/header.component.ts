@@ -7,6 +7,7 @@ import { Observable, of, Subscription } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators'; 
 import { AuthService } from '../../services/auth.service';
 import { UserProfileComponent } from '../../pages/user-profile/user-profile.component';
+import { FormsModule } from '@angular/forms';
 
 interface ValidationResponse {
     isValid: boolean;
@@ -23,7 +24,8 @@ interface ValidationResponse {
     imports: [
         CommonModule, 
         RouterModule, 
-        MatIconModule
+        MatIconModule,
+        FormsModule,
     ],
     templateUrl: './header.component.html',
     styleUrl: './header.component.scss'
@@ -33,7 +35,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     isLoggedIn = false; 
     userProfileImageUrl: string | null = null; 
     username: string | null = null;
-    private authSubscription: Subscription = new Subscription(); 
+    private authSubscription: Subscription = new Subscription();
+    searchTerm: string = '';
 
     constructor(
         private router: Router,
@@ -109,6 +112,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
     clearAuthData() {
         localStorage.removeItem('token');
         console.log("Auth data cleared from localStorage.");
+    }
+
+    onSearchSubmit(): void {
+        const query = this.searchTerm.trim();
+        if (query) {
+             console.log(`Navigating to search results for: ${query}`);
+             this.router.navigate(['/search'], { queryParams: { query: query } });
+             // Очищаем поле поиска после отправки (опционально)
+             // this.searchTerm = '';
+             this.isMobileMenuOpen = false;
+        } else {
+            console.log('Search term is empty, not navigating.');
+        }
     }
 
     toggleMobileMenu() {

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators'; 
+import { catchError, throwError } from 'rxjs';
 
 
 const API_BASE_URL = 'http://127.0.0.1:8000/api/store'; 
@@ -38,7 +39,18 @@ export class ProductsService {
     );
   }
 
- 
+  searchProducts(searchTerm: string): Observable<Product[]> {
+    const url = `${API_BASE_URL}/products/?search=${encodeURIComponent(searchTerm)}`;
+    console.log(`ProductService: Searching at URL: ${url}`); 
+    return this.http.get<Product[]>(url).pipe(
+      map(products => products.map(product => this.processProductImage(product))),
+      catchError(err => {
+          console.error("Error in searchProducts API call:", err);
+          return throwError(() => new Error('API search failed')); 
+      })
+    );
+  }
+
   getProductById(id: number): Observable<Product> {
     return this.http.get<Product>(`${API_BASE_URL}/products/${id}/`).pipe(
       map(product => this.processProductImage(product))

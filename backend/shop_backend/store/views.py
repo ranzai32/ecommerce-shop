@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.core.exceptions import PermissionDenied
 from django.conf import settings
 from .models import Category, Product, Cart, CartItem
+from rest_framework.filters import SearchFilter
 
 from .serializers import (
     CategorySerializer,
@@ -34,6 +35,8 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Product.objects.filter(available=True) 
     serializer_class = ProductSerializer
     permission_classes = [permissions.AllowAny] 
+    filter_backends = [SearchFilter] 
+    search_fields = ['name', 'description', 'category__name']
 
 class CartViewSet(viewsets.GenericViewSet):
     serializer_class = CartSerializer
@@ -134,7 +137,6 @@ class CartViewSet(viewsets.GenericViewSet):
              print(f"Error removing item {item_id} for user {request.user}: {e}")
              return Response({'detail': 'Ошибка удаления товара из корзины.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Метод для DELETE /api/store/cart/clear/
     def clear_cart(self, request, *args, **kwargs):
          try:
             cart = self.get_object()
